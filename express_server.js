@@ -34,15 +34,20 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+
+// RENDER THE URLS PAGE
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+// RENDER NEW URLS PAGE
 app.get("/urls/new", (req, res) => {
   res.render('urls_new');
 })
 
+
+//RENDER SHOW URLS PAGE
 app.get('/urls/:id', (req, res) => {
   const shortID = req.params.id;
   const longURL = urlDatabase[shortID];
@@ -54,22 +59,32 @@ app.get('/urls/:id', (req, res) => {
   res.render('urls_shows', templateVars)
 })
 
+//REDIRECT TO LONG URL AFTER CLICKING SHORT URL 
 app.get('/u/:id', (req, res) => {
   const shortID = req.params.id;
   const longURL = urlDatabase[shortID];
-  console.log('longURL', longURL);;
   return res.redirect(longURL);
 })
 
+//CREATING THE NEW SHORTID AND LONGURLTO PUT INTO DATA BASE 
 app.post('/urls', (req, res) => {
   let longURL = req.body.longURL;
   let shortID = generateRandomString();
   urlDatabase[shortID] = longURL;
 
-  console.log('shortID 2', shortID);
   res.redirect(`/urls/${shortID}`);
 })
 
+
+//DELETE URL ON URLS PAGE
+app.post('/urls/:id/delete', (req, res) => {
+  const id = req.params.id;
+  delete urlDatabase[id];
+  return res.redirect('/urls');
+
+})
+
+//LISTENING PORT
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
