@@ -27,17 +27,12 @@ app.get("/", (req, res) => {
 });
 
 app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase)
+  res.json(urlDatabase);
 })
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-
-app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase }
-  res.render('urls_index', templateVars)
-})
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
@@ -49,19 +44,30 @@ app.get("/urls/new", (req, res) => {
 })
 
 app.get('/urls/:id', (req, res) => {
-  const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL]
+  const shortID = req.params.id;
+  const longURL = urlDatabase[shortID];
   const templateVars = {
-    id: shortURL,
+    id: shortID,
     longURL
-  }
-  console.log('longURL',longURL)
+  };
+
   res.render('urls_shows', templateVars)
 })
 
+app.get('/u/:id', (req, res) => {
+  const shortID = req.params.id;
+  const longURL = urlDatabase[shortID];
+  console.log('longURL', longURL);;
+  return res.redirect(longURL);
+})
+
 app.post('/urls', (req, res) => {
-  console.log(req.body);
-  res.send('OK')
+  let longURL = req.body.longURL;
+  let shortID = generateRandomString();
+  urlDatabase[shortID] = longURL;
+
+  console.log('shortID 2', shortID);
+  res.redirect(`/urls/${shortID}`);
 })
 
 app.listen(PORT, () => {
