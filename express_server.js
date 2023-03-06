@@ -41,7 +41,11 @@ app.get("/hello", (req, res) => {
 
 // RENDER THE URLS PAGE
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const userName = req.cookies['username'];
+  const templateVars = { 
+    urls: urlDatabase,
+    userName
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -63,6 +67,7 @@ app.get('/urls/:id', (req, res) => {
   res.render('urls_shows', templateVars)
 })
 
+
 //REDIRECT TO LONG URL AFTER CLICKING SHORT URL 
 app.get('/u/:id', (req, res) => {
   const shortID = req.params.id;
@@ -70,41 +75,47 @@ app.get('/u/:id', (req, res) => {
   return res.redirect(longURL);
 })
 
-//CREATING THE NEW SHORTID AND LONGURL TO PUT INTO DATA BASE 
+
+//SHORTID AND LONGURL IN DATA BASE 
 app.post('/urls', (req, res) => {
   let longURL = req.body.longURL;
   let shortID = generateRandomString();
   urlDatabase[shortID] = longURL;
-
+  
   res.redirect(`/urls/${shortID}`);
 })
-
 
 //DELETE URL ON URLS PAGE
 app.post('/urls/:id/delete', (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
   return res.redirect('/urls');
-
+  
 })
 
 //UPDATE A RESOURCE
 app.post('/urls/:id', (req, res) => {
-const shortID = req.params.id;
-const longURL = req.body.longURL;
-urlDatabase[shortID] = longURL
-console.log('req.params', req.params)
-console.log('req.body', req.body)
-res.redirect ('/urls')
+  const shortID = req.params.id;
+  const longURL = req.body.longURL;
+  urlDatabase[shortID] = longURL
+  console.log('req.params', req.params);
+  console.log('req.body', req.body);
+  return res.redirect ('/urls');
 })
 
 //LOGIN ROUTE 
 app.post('/login', (req,res) => {
   const username = req.body.username;
-  res.cookie('username', username)
-  res.redirect('/urls')
+  res.cookie('username', username);
+  return res.redirect('/urls');
 })
 
+//LOGOUT ROUTE 
+app.post ('/logout', (req, res) => {
+ const username = req.body.username;
+ res.clearCookie('username', username);
+ return res.redirect('/urls');
+})
 //LISTENING PORT
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
