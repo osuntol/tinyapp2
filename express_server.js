@@ -66,7 +66,7 @@ app.get('/u/:id', (req, res) => {
   return res.redirect(longURL);
 })
 
-//CREATING THE NEW SHORTID AND LONGURLTO PUT INTO DATA BASE 
+//CREATING THE NEW SHORTID AND LONGURL TO PUT INTO DATA BASE 
 app.post('/urls', (req, res) => {
   let longURL = req.body.longURL;
   let shortID = generateRandomString();
@@ -82,6 +82,16 @@ app.post('/urls/:id/delete', (req, res) => {
   delete urlDatabase[id];
   return res.redirect('/urls');
 
+})
+
+//UPDATE A RESOURCE
+app.post('/urls/:id', (req, res) => {
+const shortID = req.params.id;
+const longURL = req.body.longURL;
+urlDatabase[shortID] = longURL
+console.log('req.params', req.params)
+console.log('req.body', req.body)
+res.redirect ('/urls')
 })
 
 //LISTENING PORT
