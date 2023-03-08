@@ -160,7 +160,6 @@ app.post('/register', (req, res) => {
     return res.status(400).send('Error registering input email or password')
   }
   const user = getUserByEmail(users, email);
-  console.log('USERS->>', user)
   if(user){
     return res.status(400).send('Error user already exists')
   }
