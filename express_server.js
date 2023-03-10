@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 
 
 //MIDDLEWARE
@@ -232,11 +233,12 @@ app.post('/urls/:id', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const user = getUserByEmail(users, email);
-  if (user && user.password === password) {
+  if (user && bcrypt.compareSync(password, hashedPassword)) {
     res.cookie('user_id', user.id);
   }
-  if (!email || !password) {
+  if (!email || !hashedPassword) {
     return res.status(400).send('Error logging in input email or password')
   }
   return res.redirect('/urls');
@@ -252,7 +254,8 @@ app.post('/logout', (req, res) => {
 app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  if (!email || !password) {
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  if (!email || !hashedPassword) {
     return res.status(400).send('Error registering input email or password')
   }
   const user = getUserByEmail(users, email);
@@ -263,7 +266,7 @@ app.post('/register', (req, res) => {
   const thisUser = {
     id: userID,
     email,
-    password
+    hashedPassword
   };
   users[userID] = thisUser;
   res.cookie('user_id', userID);
