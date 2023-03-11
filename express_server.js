@@ -119,7 +119,6 @@ app.get('/urls/:id', (req, res) => {
 //REDIRECT TO LONG URL AFTER CLICKING SHORT URL 
 app.get('/u/:id', (req, res) => {
   const shortID = req.params.id;
-  console.log('SHORT ID', shortID);
   if (shortID in urlDatabase) {
     const longURL = urlDatabase[shortID].longURL;
     return res.redirect(longURL);
@@ -178,7 +177,6 @@ app.post('/urls/:id', (req, res) => {
   const user = req.session.user_id;
   const shortID = req.params.id;
   const longURL = req.body.longURL;
-  console.log('URL DATABASE', urlDatabase)
 
   if (!id) {
     res.status(400).send('id does not exist');
@@ -186,10 +184,8 @@ app.post('/urls/:id', (req, res) => {
   if (!user) {
     res.status(400).send('user is not logged in');
   }
-  console.log('IF CONDITION', urlDatabase[id].userID === user)
   if (urlDatabase[id].userID == user) {
     urlDatabase[id].longURL = longURL;
-    console.log('URL DATABASE 2', urlDatabase)
     return res.redirect("/urls");
   } else {
     res.send('Error can only be updated if they belong to user').status(403);
